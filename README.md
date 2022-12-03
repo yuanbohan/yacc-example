@@ -1,29 +1,15 @@
-goyacc sample
+goyacc examples
 ------
 
 help you to understand how to use goyacc to write your own parser.
-this is just a sample to write a very simple and limited calculator, forked from [goyacc expr](https://github.com/golang/tools/tree/master/cmd/goyacc/testdata/expr)
 
-```
-./expr
-> 1 + 2
-3
-> 3 * 4 / 2
-6
-> 5
-5
-```
-
-# Install
+## Install
 
 ```shell
 go install golang.org/x/tools/cmd/goyacc@latest
-goyacc expr.y
-go build -o expr y.go
-./expr
 ```
 
-# Usage
+## Usage
 
 ```shell
 goyacc -h
@@ -38,9 +24,9 @@ Usage of goyacc:
         create parsing tables (default "y.output")
 ```
 
-# Steps
+## Steps
 
-* write your lexer
+- write your lexer
 
 ```go
 // The parser uses the type <prefix>Lex as a lexer. It must provide
@@ -63,11 +49,61 @@ func (x *yyLex) Error(s string) {
 }
 ```
 
-* write your parser (*.y file)
-* generate parser (*.go file) by goyacc
+- write your parser (*.y file)
+- generate parser (*.go file) by goyacc
+
+## parser grammer (*.y file)
+
+use Backus Naur Form (BNF)
+
+- `%token`
+
+- `%type`
+
+the name in %type MUST be defined in %union, and %type connects the type defined in %union with symbols
+
+- `%union`
+
+- `func (x *yyLex) Lex(yylval *yySymType) int {}`
+
+  - return. the type of the token. integer.
+  - real value. stored in yylval
+
+- rule
+
+`$$`: symbol on the left side of colon
+`$1` `$2` ...: symbol on the right side of colon
+`{ ... }` : action invoked
+
+```
+...
+expr:
+    NUM
+|   expr '+' NUM {
+        $$ = $1 + $3
+    }
+...
+
+$$ : expr (outer)
+$1 : expr (inner)
+$3 : NUM
+```
+
+- final call
+
+```
+func yyParse(yylex yyLexer) int {
+    return yyNewParser().Parse(yylex)
+}
+```
+
+yylex is your lex struct which implemented the yyLexer interface
+
 
 ## Resources
 
   * https://cloud.tencent.com/developer/article/1744609
+  * https://mp.weixin.qq.com/s/qSbftFcRfigqEl_2-bfw3A
+  * https://github.com/sougou/parser_tutorial
   * https://about.sourcegraph.com/blog/go/gophercon-2018-how-to-write-a-parser-in-go
   * https://github.com/golang/tools/tree/master/cmd/goyacc/testdata/expr

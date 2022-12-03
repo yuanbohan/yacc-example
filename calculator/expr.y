@@ -1,9 +1,4 @@
-/*
-  goyacc expr.y
-  go build -o expr y.go
-*/
 %{
-
 package main
 
 import (
