@@ -3,6 +3,10 @@ goyacc examples
 
 help you to understand how to use goyacc to write your own parser.
 
+- [if/then/else](./if)
+- [calculator](./calculator)
+- [json](./json)
+
 ## Install
 
 ```shell
